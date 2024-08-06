@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 # Define the URL of your FastAPI service
-FASTAPI_URL = "http://127.0.0.1:8000/predict_income/"
+FASTAPI_URL = "http://127.0.0.1:8000/docs/"
 
 # Set up SQLite database connection
 conn = sqlite3.connect('predictions.db')
@@ -59,7 +59,7 @@ def home_page():
     st.write("""
     Welcome to the Income Predictor app. This app uses a machine learning model to predict whether an individual's income is above or below a certain limit based on various features.
     """)
-    st.image("frontend\Income_Page.png")
+    st.image("frontend/Income_Page.png")  # Ensure the correct path to the image
 
 # Predict Page
 def predict_page():
