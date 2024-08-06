@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 # Define the URL of your FastAPI service
-FASTAPI_URL = "http://127.0.0.1:8000/docs/"
+FASTAPI_URL = "http://127.0.0.1:8000/predict_income/"
 
 # Set up SQLite database connection
 conn = sqlite3.connect('predictions.db')
@@ -59,7 +59,7 @@ def home_page():
     st.write("""
     Welcome to the Income Predictor app. This app uses a machine learning model to predict whether an individual's income is above or below a certain limit based on various features.
     """)
-    st.image("frontend/Income_Page.png")  # Ensure the correct path to the image
+    st.image("frontend/Income_Page.png")
 
 # Predict Page
 def predict_page():
@@ -124,14 +124,12 @@ def predict_page():
         # Get the prediction
         prediction = get_prediction(data)
         
-        # Display the prediction
-        if prediction and "income_level" in prediction:
-            income_level = prediction['income_level']
+        if prediction:
+            income_level = prediction.get("income_level", "Unknown")
             st.success(f"The predicted income level is: {income_level}")
+            
             # Save the prediction to the database
             save_prediction(data, income_level)
-        else:
-            st.error("Prediction failed")
 
 # History Page
 def history_page():
@@ -149,9 +147,27 @@ def history_page():
     else:
         st.write("No predictions found.")
 
+def data_page():
+    st.title("Dataset Viewer")
+    
+    uploaded_file = st.file_uploader("Choose a file")
+    if uploaded_file is not None:
+        try:
+            data = pd.read_csv(uploaded_file)
+        except UnicodeDecodeError:
+            try:
+                data = pd.read_csv(uploaded_file, encoding='latin1')
+            except UnicodeDecodeError:
+                st.error("The file could not be read with UTF-8 or latin1 encoding. Please check the file encoding.")
+                return
+        
+        st.write("Here's a preview of your dataset:")
+        st.dataframe(data)
+
+
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Predict", "History"])
+page = st.sidebar.radio("Go to", ["Home", "Predict", "History", "Data"])
 
 # Show the selected page
 if page == "Home":
@@ -160,3 +176,5 @@ elif page == "Predict":
     predict_page()
 elif page == "History":
     history_page()
+elif page == "Data":
+    data_page()
