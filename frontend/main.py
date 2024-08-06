@@ -87,7 +87,7 @@ def predict_page():
     race_values = ['White', 'Black', 'Asian-Pacific-Islander', 'Amer-Indian-Eskimo', 'Other']
     race = st.selectbox("Race", race_values)
     
-    employment_type = st.selectbox("Employment Type", ["Private", "Self-Employed", "Government", "Unemployed"])
+    employment_type = st.selectbox("Employment Type", ["Not in labor force", "Children/Armed Forces", "Full time", "Part time", "Unemployed"])
     
     industry_values = ['Unborn/Children', 'Hospital services', 'Retail trade',
                        'Finance insurance and real estate', 'Manufacturing-nondurable goods',
