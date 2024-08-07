@@ -30,7 +30,7 @@ gradient_boost = joblib.load('gradient_boost_pipeline.pkl')
 random_forest = joblib.load('random_forest_pipeline.pkl')
 encoder = joblib.load('label_encoder.pkl')
 
-@app.post('/predict_income')
+@app.post('/predict')
 def predict_income(data: IncomeRequest):
     # Convert input data to DataFrame
     df = pd.DataFrame([data.dict()])
