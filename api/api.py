@@ -30,18 +30,18 @@ gradient_boost = joblib.load('gradient_boost_pipeline.pkl')
 random_forest = joblib.load('random_forest_pipeline.pkl')
 encoder = joblib.load('label_encoder.pkl')
 
-@app.post('/predict')
+@app.post('/predict_income')
 def predict_income(data: IncomeRequest):
     # Convert input data to DataFrame
-    df = pd.DataFrame([data.model_dump()])
+    df = pd.DataFrame([data.dict()])
 
     # Make predictions
-    prediction_grad = gradient_boost.predict(df)
-    prediction_ran = random_forest.predict(df)
+    prediction_grad = gradient_boost.predict(df)[0]
+    prediction_ran = random_forest.predict(df)[0]
     
     # Get prediction probabilities
-    prob_grad = gradient_boost.predict_proba(df)
-    prob_ran = random_forest.predict_proba(df)
+    prob_grad = gradient_boost.predict_proba(df)[0]
+    prob_ran = random_forest.predict_proba(df)[0]
     
     # Convert predictions to int
     prediction_log = int(prediction_grad)
