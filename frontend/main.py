@@ -119,7 +119,8 @@ def predict_page():
             "race": race,
             "employment_type": employment_type,
             "industry": industry,
-            "country_of_birth": citizenship
+            "citizenship": citizenship,
+            "country_of_birth": country_of_birth
         }
         
         # Get the prediction
