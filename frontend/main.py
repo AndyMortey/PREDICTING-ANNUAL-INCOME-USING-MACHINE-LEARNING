@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 # Define the URL of your FastAPI service
-FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com"
+FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com/predict"
 
 # Set up SQLite database connection
 conn = sqlite3.connect('predictions.db')
@@ -41,7 +41,7 @@ def get_prediction(data):
         return None
 
 # Function to save prediction to SQLite database
-def save_prediction(data, income_level):
+def save_prediction(data, gradient_boost_prediction, random_forest_prediction):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with conn:
         c.execute('''
@@ -125,11 +125,13 @@ def predict_page():
         prediction = get_prediction(data)
         
         if prediction:
-            income_level = prediction.get("income_level", "Unknown")
-            st.success(f"The predicted income level is: {income_level}")
+            gradient_boost_prediction = prediction.get("gradient_boost_prediction", "Unknown")
+            random_forest_prediction = prediction.get("random_forest_prediction", "Unknown")
+            st.success(f"Gradient Boost Prediction: {gradient_boost_prediction}\nRandom Forest Prediction: {random_forest_prediction}")
+            ")
             
             # Save the prediction to the database
-            save_prediction(data, income_level)
+            save_prediction(data, gradient_boost_prediction, random_forest_prediction)
 
 # History Page
 def history_page():
