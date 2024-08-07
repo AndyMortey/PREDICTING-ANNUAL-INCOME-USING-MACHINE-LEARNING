@@ -25,7 +25,8 @@ c.execute('''
         employment_type TEXT,
         industry TEXT,
         country_of_birth TEXT,
-        income_level TEXT
+        gradient_boost_prediction TEXT,
+        random_forest_prediction TEXT
     )
 ''')
 conn.commit()
@@ -47,11 +48,11 @@ def save_prediction(data, gradient_boost_prediction, random_forest_prediction):
         c.execute('''
             INSERT INTO predictions (timestamp, age, wage_per_hour, working_week_per_year, capital_gain, 
                                       capital_losses, gender, education, marital_status, race, employment_type, 
-                                      industry, country_of_birth, income_level)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                      industry, country_of_birth, gradient_boost_prediction, random_forest_prediction)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (timestamp, data['age'], data['wage_per_hour'], data['working_week_per_year'], data['capital_gain'],
               data['capital_losses'], data['gender'], data['education'], data['marital_status'], data['race'],
-              data['employment_type'], data['industry'], data['country_of_birth'], income_level))
+              data['employment_type'], data['industry'], data['country_of_birth'], gradient_boost_prediction, random_forest_prediction))
 
 # Home Page
 def home_page():
@@ -128,7 +129,6 @@ def predict_page():
             gradient_boost_prediction = prediction.get("gradient_boost_prediction", "Unknown")
             random_forest_prediction = prediction.get("random_forest_prediction", "Unknown")
             st.success(f"Gradient Boost Prediction: {gradient_boost_prediction}\nRandom Forest Prediction: {random_forest_prediction}")
-            ")
             
             # Save the prediction to the database
             save_prediction(data, gradient_boost_prediction, random_forest_prediction)
@@ -144,7 +144,7 @@ def history_page():
     if rows:
         df = pd.DataFrame(rows, columns=['Timestamp', 'Age', 'Wage per Hour', 'Working Weeks per Year', 'Capital Gain', 
                                          'Capital Losses', 'Gender', 'Education', 'Marital Status', 'Race', 
-                                         'Employment Type', 'Industry', 'Country of Birth', 'Income Level'])
+                                         'Employment Type', 'Industry', 'Country of Birth', 'Gradient Boost Prediction', 'Random Forest Prediction'])
         st.dataframe(df)
     else:
         st.write("No predictions found.")
@@ -165,7 +165,6 @@ def data_page():
         
         st.write("Here's a preview of your dataset:")
         st.dataframe(data)
-
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
