@@ -24,7 +24,7 @@ c.execute('''
         race TEXT,
         employment_type TEXT,
         industry TEXT,
-        country_of_birth TEXT,
+        citizenship TEXT,
         gradient_boost_prediction TEXT,
         random_forest_prediction TEXT
     )
@@ -48,11 +48,11 @@ def save_prediction(data, gradient_boost_prediction, random_forest_prediction):
         c.execute('''
             INSERT INTO predictions (timestamp, age, wage_per_hour, working_week_per_year, capital_gain, 
                                       capital_losses, gender, education, marital_status, race, employment_type, 
-                                      industry, country_of_birth, gradient_boost_prediction, random_forest_prediction)
+                                      industry, citizenship, gradient_boost_prediction, random_forest_prediction)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (timestamp, data['age'], data['wage_per_hour'], data['working_week_per_year'], data['capital_gain'],
               data['capital_losses'], data['gender'], data['education'], data['marital_status'], data['race'],
-              data['employment_type'], data['industry'], data['country_of_birth'], gradient_boost_prediction, random_forest_prediction))
+              data['employment_type'], data['industry'], data['citizenship'], gradient_boost_prediction, random_forest_prediction))
 
 # Home Page
 def home_page():
@@ -102,7 +102,7 @@ def predict_page():
     
     citizenship_values = ['Native', 'Non-Citizen', 'US citizen by naturalization',
                           'Native- Born abroad', 'Native- Born in Puerto Rico/US Outlying']
-    citizenship = st.selectbox("Country of Birth", citizenship_values)
+    citizenship = st.selectbox("Citizenship", citizenship_values)
     
     # When the user clicks the Predict button
     if st.button("Predict"):
@@ -119,8 +119,7 @@ def predict_page():
             "race": race,
             "employment_type": employment_type,
             "industry": industry,
-            "citizenship": citizenship,
-            "country_of_birth": country_of_birth
+            "citizenship": citizenship
         }
         
         # Get the prediction
@@ -145,7 +144,7 @@ def history_page():
     if rows:
         df = pd.DataFrame(rows, columns=['Timestamp', 'Age', 'Wage per Hour', 'Working Weeks per Year', 'Capital Gain', 
                                          'Capital Losses', 'Gender', 'Education', 'Marital Status', 'Race', 
-                                         'Employment Type', 'Industry', 'Country of Birth', 'Gradient Boost Prediction', 'Random Forest Prediction'])
+                                         'Employment Type', 'Industry', 'Citizenship', 'Gradient Boost Prediction', 'Random Forest Prediction'])
         st.dataframe(df)
     else:
         st.write("No predictions found.")
