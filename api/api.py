@@ -19,7 +19,6 @@ class IncomeRequest(BaseModel):
     capital_gain: int
     capital_losses: int
     citizenship: object
-    country_of_birth: object
 
 @app.get('/')
 def status_check():
