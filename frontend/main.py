@@ -163,7 +163,7 @@ def data_page():
     st.title("Dataset Viewer")
     
     # Load dataset
-    df = pd.read_csv('Dataset/cleaned_dataset.csv')
+    df = pd.read_csv('frontend/cleaned_dataset.csv')
     
     st.write("Here's a preview of the loaded dataset:")
     st.dataframe(df)
@@ -185,7 +185,7 @@ def data_page():
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Data", "Predict", "History", "Home"])
+page = st.sidebar.radio("Go to", ["Home", "Data", "Predict", "History"])
 
 # Show the selected page
 if page == "Home":
