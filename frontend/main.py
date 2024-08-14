@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 # Define the URL of your FastAPI service
-FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com/predict"
+FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com/docs"
 
 # Set up SQLite database connection
 conn = sqlite3.connect('predictions.db')
@@ -25,8 +25,8 @@ c.execute('''
         employment_type TEXT,
         industry TEXT,
         citizenship TEXT,
-        gradient_boost_prediction TEXT,
-        random_forest_prediction TEXT
+        country_of_birth TEXT,
+        income_level TEXT
     )
 ''')
 conn.commit()
@@ -42,17 +42,17 @@ def get_prediction(data):
         return None
 
 # Function to save prediction to SQLite database
-def save_prediction(data, gradient_boost_prediction, random_forest_prediction):
+def save_prediction(data, income_level):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with conn:
         c.execute('''
             INSERT INTO predictions (timestamp, age, wage_per_hour, working_week_per_year, capital_gain, 
                                       capital_losses, gender, education, marital_status, race, employment_type, 
-                                      industry, citizenship, gradient_boost_prediction, random_forest_prediction)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                      industry, citizenship, country_of_birth, income_level)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (timestamp, data['age'], data['wage_per_hour'], data['working_week_per_year'], data['capital_gain'],
               data['capital_losses'], data['gender'], data['education'], data['marital_status'], data['race'],
-              data['employment_type'], data['industry'], data['citizenship'], gradient_boost_prediction, random_forest_prediction))
+              data['employment_type'], data['industry'], data['citizenship'], data['country_of_birth'], income_level))
 
 # Home Page
 def home_page():
@@ -103,6 +103,16 @@ def predict_page():
     citizenship_values = ['Native', 'Non-Citizen', 'US citizen by naturalization',
                           'Native- Born abroad', 'Native- Born in Puerto Rico/US Outlying']
     citizenship = st.selectbox("Citizenship", citizenship_values)
+
+    country_of_birth_values = ['US', 'Unknown', 'El-Salvador', 'Mexico', 'Philippines', 'Cambodia',
+       'China', 'Hungary', 'Puerto-Rico', 'England', 'Dominican-Republic',
+       'Japan', 'Canada', 'Ecuador', 'Italy', 'Cuba', 'Peru', 'Taiwan',
+       'South Korea', 'Poland', 'Nicaragua', 'Germany', 'Guatemala',
+       'India', 'Ireland', 'Honduras', 'France', 'Trinadad&Tobago',
+       'Thailand', 'Iran', 'Vietnam', 'Portugal', 'Laos', 'Panama',
+       'Scotland', 'Columbia', 'Jamaica', 'Greece', 'Haiti', 'Yugoslavia',
+       'Outlying-U S (Guam USVI etc)', 'Holand-Netherlands', 'Hong Kong']
+    country_of_birth = st.selectbox("Country of Birth", country_of_birth_values)
     
     # When the user clicks the Predict button
     if st.button("Predict"):
@@ -119,19 +129,19 @@ def predict_page():
             "race": race,
             "employment_type": employment_type,
             "industry": industry,
-            "citizenship": citizenship
+            "citizenship": citizenship,
+            "country_of_birth": country_of_birth
         }
         
         # Get the prediction
         prediction = get_prediction(data)
         
         if prediction:
-            gradient_boost_prediction = prediction.get("gradient_boost_prediction", "Unknown")
-            random_forest_prediction = prediction.get("random_forest_prediction", "Unknown")
-            st.success(f"Gradient Boost Prediction: {gradient_boost_prediction}\nRandom Forest Prediction: {random_forest_prediction}")
+            income_level = prediction.get("income_level", "Unknown")
+            st.success(f"The predicted income level is: {income_level}")
             
             # Save the prediction to the database
-            save_prediction(data, gradient_boost_prediction, random_forest_prediction)
+            save_prediction(data, income_level)
 
 # History Page
 def history_page():
@@ -144,7 +154,7 @@ def history_page():
     if rows:
         df = pd.DataFrame(rows, columns=['Timestamp', 'Age', 'Wage per Hour', 'Working Weeks per Year', 'Capital Gain', 
                                          'Capital Losses', 'Gender', 'Education', 'Marital Status', 'Race', 
-                                         'Employment Type', 'Industry', 'Citizenship', 'Gradient Boost Prediction', 'Random Forest Prediction'])
+                                         'Employment Type', 'Industry', 'Citizenship', 'Country of Birth', 'Income Level'])
         st.dataframe(df)
     else:
         st.write("No predictions found.")
@@ -152,6 +162,12 @@ def history_page():
 def data_page():
     st.title("Dataset Viewer")
     
+    # Load dataset
+    df = pd.read_csv('Dataset/cleaned_dataset.csv')
+    
+    st.write("Here's a preview of the loaded dataset:")
+    st.dataframe(df)
+
     uploaded_file = st.file_uploader("Choose a file")
     if uploaded_file is not None:
         try:
@@ -163,19 +179,20 @@ def data_page():
                 st.error("The file could not be read with UTF-8 or latin1 encoding. Please check the file encoding.")
                 return
         
-        st.write("Here's a preview of your dataset:")
+        st.write("Here's a preview of your uploaded dataset:")
         st.dataframe(data)
+
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Predict", "History", "Data"])
+page = st.sidebar.radio("Go to", ["Data", "Predict", "History", "Home"])
 
 # Show the selected page
 if page == "Home":
     home_page()
+elif page == "Data":
+    data_page()
 elif page == "Predict":
     predict_page()
 elif page == "History":
     history_page()
-elif page == "Data":
-    data_page()
