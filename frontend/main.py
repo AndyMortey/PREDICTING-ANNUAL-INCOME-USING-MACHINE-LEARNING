@@ -163,7 +163,7 @@ def data_page():
     st.title("Dataset Viewer")
     
     # Load dataset
-    df = pd.read_csv('frontend/cleaned_dataset.csv')
+    df = pd.read_csv('frontend/cleaned_dataset.csv', nrows=100)
     
     st.write("Here's a preview of the loaded dataset:")
     st.dataframe(df)
