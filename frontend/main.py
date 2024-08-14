@@ -26,7 +26,8 @@ c.execute('''
         industry TEXT,
         citizenship TEXT,
         country_of_birth TEXT,
-        income_level TEXT
+        gradient_boost_prediction TEXT,
+        random_forest_prediction TEXT
     )
 ''')
 conn.commit()
@@ -42,7 +43,7 @@ def get_prediction(data):
         return None
 
 # Function to save prediction to SQLite database
-def save_prediction(data, income_level):
+def save_prediction(data, gradient_boost_prediction, random_forest_prediction):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with conn:
         c.execute('''
@@ -52,7 +53,7 @@ def save_prediction(data, income_level):
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (timestamp, data['age'], data['wage_per_hour'], data['working_week_per_year'], data['capital_gain'],
               data['capital_losses'], data['gender'], data['education'], data['marital_status'], data['race'],
-              data['employment_type'], data['industry'], data['citizenship'], data['country_of_birth'], income_level))
+              data['employment_type'], data['industry'], data['citizenship'], data['country_of_birth'], gradient_boost_prediction, random_forest_prediction))
 
 # Home Page
 def home_page():
@@ -137,11 +138,13 @@ def predict_page():
         prediction = get_prediction(data)
         
         if prediction:
+            gradient_boost_prediction = prediction.get("gradient_boost_prediction", "Unknown")
+            random_forest_prediction = prediction.get("random_forest_prediction", "Unknown")
             income_level = prediction.get("income_level", "Unknown")
-            st.success(f"The predicted income level is: {income_level}")
+            st.success(f"Gradient Boost Prediction: {gradient_boost_prediction}\nRandom Forest Prediction: {random_forest_prediction}")
             
             # Save the prediction to the database
-            save_prediction(data, income_level)
+            save_prediction(data, gradient_boost_prediction, random_forest_prediction)
 
 # History Page
 def history_page():
@@ -154,7 +157,7 @@ def history_page():
     if rows:
         df = pd.DataFrame(rows, columns=['Timestamp', 'Age', 'Wage per Hour', 'Working Weeks per Year', 'Capital Gain', 
                                          'Capital Losses', 'Gender', 'Education', 'Marital Status', 'Race', 
-                                         'Employment Type', 'Industry', 'Citizenship', 'Country of Birth', 'Income Level'])
+                                         'Employment Type', 'Industry', 'Citizenship', 'Country of Birth', 'gradient_boost_prediction', 'random_forest_prediction'])
         st.dataframe(df)
     else:
         st.write("No predictions found.")
