@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 # Define the URL of your FastAPI service
-FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com/docs"
+FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com/predict_income/"
 
 # Set up SQLite database connection
 conn = sqlite3.connect('predictions.db')
@@ -34,7 +34,7 @@ conn.commit()
 # Function to get the prediction from the FastAPI service
 def get_prediction(data):
     try:
-        response = requests.post(FASTAPI_URL, json=data)
+        response = requests.post(f"{FASTAPI_URL}/predict_income", json=data)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
