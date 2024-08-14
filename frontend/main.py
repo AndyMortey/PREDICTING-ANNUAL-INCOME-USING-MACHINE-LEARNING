@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 # Define the URL of your FastAPI service
-FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com"
+FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com/docs"
 
 # Set up SQLite database connection
 conn = sqlite3.connect('predictions.db')
