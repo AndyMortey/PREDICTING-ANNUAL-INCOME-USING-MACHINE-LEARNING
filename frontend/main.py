@@ -7,11 +7,16 @@ from datetime import datetime
 # Define the URL of your FastAPI service
 FASTAPI_URL = "https://predicting-annual-income-using-machine.onrender.com"
 
+# Drop the existing table (if necessary)
+c.execute('DROP TABLE IF EXISTS predictions')
+
+
+
 # Set up SQLite database connection
 conn = sqlite3.connect('predictions.db')
 c = conn.cursor()
 c.execute('''
-    CREATE TABLE IF NOT EXISTS predictions (
+    CREATE TABLE predictions (
         timestamp TEXT,
         age INTEGER,
         wage_per_hour REAL,
