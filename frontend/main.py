@@ -145,7 +145,6 @@ def predict_page():
         if prediction:
             gradient_boost_prediction = prediction.get("gradient_boost_prediction", "Unknown")
             random_forest_prediction = prediction.get("random_forest_prediction", "Unknown")
-            income_level = prediction.get("income_level", "Unknown")
             st.success(f"Gradient Boost Prediction: {gradient_boost_prediction}\nRandom Forest Prediction: {random_forest_prediction}")
             
             # Save the prediction to the database
