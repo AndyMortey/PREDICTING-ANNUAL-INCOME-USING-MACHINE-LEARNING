@@ -54,7 +54,7 @@ def save_prediction(data, gradient_boost_prediction, random_forest_prediction):
         c.execute('''
             INSERT INTO predictions (timestamp, age, wage_per_hour, working_week_per_year, capital_gain, 
                                       capital_losses, gender, education, marital_status, race, employment_type, 
-                                      industry, citizenship, country_of_birth, income_level)
+                                      industry, citizenship, country_of_birth)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (timestamp, data['age'], data['wage_per_hour'], data['working_week_per_year'], data['capital_gain'],
               data['capital_losses'], data['gender'], data['education'], data['marital_status'], data['race'],
